@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_management/navigationBar/NavMenu.dart';
+import 'package:inventory_management/pages/report/Plan.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:inventory_management/constant/Constants.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -100,7 +101,7 @@ class _MyReportPage extends State<reportPage> {
                   ),
                 ),
               ),
-              scrollingContainer(),
+              scrollingContainer(context),
             ],
           ),
         ),
@@ -109,20 +110,23 @@ class _MyReportPage extends State<reportPage> {
   }
 }
 
-Widget scrollingContainer() {
+Widget scrollingContainer(context) {
   return Expanded(
     child: SingleChildScrollView(
       child: Column(
         children: [
           const SizedBox(height: 30),
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              bool isSmallScreen = constraints.maxWidth < 600;
-              return isSmallScreen ? _buildColumnLayout() : _buildRowLayout();
-            },
+          ProductChart(),
+          Container(
+            padding: const EdgeInsets.all(30),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                bool isSmallScreen = constraints.maxWidth < 550;
+                return isSmallScreen ? _buildColumnLayout() : _buildRowLayout();
+              },
+            ),
           ),
-          const SizedBox(height: 50),
-          itemStorage(),
+          reportButtons(context),
         ],
       ),
     ),
@@ -133,11 +137,11 @@ Widget _buildColumnLayout() {
   return Column(
     children: [
       Center(
-        child: ProductChart(),
+        child: StorageChart(),
       ),
       const SizedBox(height: 20),
       Center(
-        child: StorageChart(),
+        child: itemStorage(),
       ),
     ],
   );
@@ -148,13 +152,13 @@ Widget _buildRowLayout() {
     children: [
       Expanded(
         child: Center(
-          child: ProductChart(),
+          child: StorageChart(),
         ),
       ),
       const SizedBox(width: 10),
       Expanded(
         child: Center(
-          child: StorageChart(),
+          child: itemStorage(),
         ),
       ),
     ],
@@ -224,23 +228,26 @@ Widget StorageChart()
   );
 }
 
-Widget itemStorage(){
+Widget itemStorage() {
   return Material(
-    elevation: 5,
+    elevation: 8,
     borderRadius: BorderRadius.circular(10),
     child: Container(
       padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          buildItemIndicator('Fish', 0.5, <Color>[Colors.orange, Colors.yellow]),
-          const SizedBox(width: 20),
-          buildItemIndicator('Vegetable', 0.9, <Color>[Colors.red, Colors.orange]),
-          const SizedBox(width: 20),
-          buildItemIndicator('Soda', 0.2, <Color>[Colors.greenAccent, Colors.green]),
-          const SizedBox(width: 20),
-          buildItemIndicator('Other', 0.67, <Color>[Colors.orange, Colors.yellow]),
-          const SizedBox(width: 20),
-        ],
+      child: IntrinsicWidth(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildItemIndicator('Fish', 0.5, <Color>[Colors.yellow, Colors.orange]),
+            const SizedBox(width: 20),
+            buildItemIndicator('Vegetable', 0.2, <Color>[Colors.orange, Colors.red]),
+            const SizedBox(width: 20),
+            buildItemIndicator('Soda', 0.9, <Color>[Colors.green, Colors.greenAccent]),
+            const SizedBox(width: 20),
+            buildItemIndicator('Other', 0.67, <Color>[Colors.greenAccent, Colors.yellow]),
+          ],
+        ),
       ),
     ),
   );
@@ -253,8 +260,73 @@ Widget buildItemIndicator(String name, double percent, List<Color> c){
       animationDuration: const Duration(seconds: 1),
       circularRadius: 15,
       color: c,
-      width: 50,
+      width: 20,
       header: '${(percent * 100).toString()}%',
       footer: name,
     );
+}
+
+Widget reportButtons(context){
+  return Container(
+    padding: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
+    child: IntrinsicWidth(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          build_reportButton('Best Seller', 'bestseller.png', context),
+          const SizedBox(width: 20),
+          build_reportButton('Balanced', 'balance.png', context),
+          const SizedBox(width: 20),
+          build_reportButton('Risk-free', 'riskfree.png', context),
+          const SizedBox(width: 30),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget build_reportButton(String label, String imgPath, context) {
+  return Material(
+    elevation: 10,
+    borderRadius: BorderRadius.circular(15),
+    child: Container(
+        width: 150,
+        height: 180,
+        padding: const EdgeInsets.all(20),
+        child: TextButton(
+          onPressed: () {
+            if (label == 'Best Seller'){
+               Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => const Plan(planNum: 1)));
+            }
+            else if (label == 'Balanced'){
+              Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => const Plan(planNum: 2)));
+            }
+            else{
+              Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => const Plan(planNum: 3)));
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imgPath,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ],
+          ),
+        ),
+    ),
+  );
 }
