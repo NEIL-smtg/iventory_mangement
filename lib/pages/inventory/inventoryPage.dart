@@ -132,6 +132,10 @@ class InventoryPage extends StatelessWidget {
 }
 
 
+
+
+
+
 class FirstSectionPage extends StatefulWidget {
   @override
   _FirstSectionPageState createState() => _FirstSectionPageState();
@@ -146,21 +150,34 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
   void initState() {
     super.initState();
     // Add initial data rows
-    _addDataRow('SKU-001', 'Supplier 1', 10, 20.0, 19.0, 25.0, 5, 10);
-    _addDataRow('SKU-002', 'Supplier 2', 15, 18.5, 18.5, 22.0, 6, 12);
-    _addDataRow('SKU-003', 'Supplier 1', 20, 22.0, 21.5, 27.0, 4, 8);
+    _addDataRow('SKU-001', 'Supplier 1', 10, 20.0, 19.0, 25.0, 5, 10, 'Refill');
+    _addDataRow('SKU-002', 'Supplier 2', 15, 18.5, 18.5, 22.0, 6, 12, 'Alert');
+    _addDataRow('SKU-003', 'Supplier 3', 21, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-004', 'Supplier 4', 22, 22.0, 21.5, 27.0, 4, 8,'Alert');
+    _addDataRow('SKU-005', 'Supplier 5', 23, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-006', 'Supplier 6', 23, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-007', 'Supplier 7', 24, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-008', 'Supplier 8', 26, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-009', 'Supplier 9', 27, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-010', 'Supplier 9', 28, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-011', 'Supplier 1', 28, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-012', 'Supplier 2', 30, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-013', 'Supplier 3', 23, 22.0, 21.5, 27.0, 4, 8, 'Alert');
+    _addDataRow('SKU-014', 'Supplier 2', 9, 22.0, 21.5, 27.0, 4, 8, 'Alert');
     // Add more initial data rows as needed
   }
 
   void _addDataRow(
-      String sku,
-      String supplier,
-      int quantity,
-      double buyPriceAvg,
-      double latestBuyPrice,
-      double sellPriceAvg,
-      int leadTimeAvg,
-      int leadTimeMax) {
+    String sku,
+    String supplier,
+    int quantity,
+    double buyPriceAvg,
+    double latestBuyPrice,
+    double sellPriceAvg,
+    int leadTimeAvg,
+    int leadTimeMax,
+    String status,
+  ) {
     setState(() {
       _rows.add(DataRow(
         cells: [
@@ -172,6 +189,16 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
           DataCell(Text(sellPriceAvg.toString())),
           DataCell(Text(leadTimeAvg.toString())),
           DataCell(Text(leadTimeMax.toString())),
+          DataCell(Text(status)),
+          DataCell(
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                // Handle edit button press
+                print('Edit button pressed for SKU: $sku');
+              },
+            ),
+          ),
         ],
       ));
     });
@@ -192,58 +219,118 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
   List<DataColumn> _getDataColumns() {
     return [
       DataColumn(
-        label: Text('Product SKU'),
+        label: Row(
+          children: [
+            Icon(Icons.category),
+            SizedBox(width: 4),
+            Text('Product SKU'),
+          ],
+        ),
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Supplier'),
+        label: Row(
+          children: [
+            Icon(Icons.supervisor_account),
+            SizedBox(width: 4),
+            Text('Supplier'),
+          ],
+        ),
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Quantity'),
+        label: Row(
+          children: [
+            Icon(Icons.shopping_cart),
+            SizedBox(width: 4),
+            Text('Quantity'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Buy Price Avg'),
+        label: Row(
+          children: [
+            Icon(Icons.attach_money),
+            SizedBox(width: 4),
+            Text('Buy Price Avg'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Latest Buy Price'),
+        label: Row(
+          children: [
+            Icon(Icons.update),
+            SizedBox(width: 4),
+            Text('Latest Buy Price'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Sell Price Avg'),
+        label: Row(
+          children: [
+            Icon(Icons.sell),
+            SizedBox(width: 4),
+            Text('Sell Price Avg'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Lead Time Avg'),
+        label: Row(
+          children: [
+            Icon(Icons.access_time),
+            SizedBox(width: 4),
+            Text('Lead Time Avg'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
       ),
       DataColumn(
-        label: Text('Lead Time Max'),
+        label: Row(
+          children: [
+            Icon(Icons.timelapse),
+            SizedBox(width: 4),
+            Text('Lead Time Max'),
+          ],
+        ),
         numeric: true,
         onSort: (columnIndex, ascending) {
           _sortRows(columnIndex, ascending);
         },
+      ),
+      DataColumn(
+        label: Row(
+          children: [
+            Icon(Icons.circle, color: Colors.red),
+            SizedBox(width: 4),
+            Text('Status'),
+          ],
+        ),
+      ),
+      DataColumn(
+        label: Text('Actions'),
       ),
     ];
   }
@@ -262,19 +349,6 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter data...',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    // Add the row to the DataTable
-                    _addDataRow('SKU', 'Supplier', 0, 0.0, 0.0, 0.0, 0, 0);
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 16.0),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
@@ -314,6 +388,11 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
     );
   }
 }
+
+
+
+
+
 
 
 

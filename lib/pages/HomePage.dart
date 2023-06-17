@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:inventory_management/constant/constants.dart';
 import 'package:inventory_management/navigationBar/NavMenu.dart';
 import 'package:inventory_management/chart/chartHomePage.dart';
+import 'package:inventory_management/pages/report/reportPage.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
 
 // const Color bgColor = Color(0xFF4A4A58);
@@ -60,6 +62,7 @@ class _MyHomePage extends State<HomePage> {
     );
   }
 
+
   Widget dashboard(context) {
     return AnimatedPositioned(
       duration: duration,
@@ -106,6 +109,7 @@ class _MyHomePage extends State<HomePage> {
                 ),
               ),
               scrollingContainer(),
+              alertsBox(context),
             ],
           ),
         ),
@@ -128,6 +132,61 @@ Expanded scrollingContainer()
           )
         )
    );
+}
+
+Widget alertsBox(BuildContext context) { // Add the context parameter
+  const alertCount = 10;
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => reportPage()), // Replace with the page you want to navigate to
+      );
+    },
+    child: Material(
+      color: bgColor,
+      elevation: 5,
+      borderRadius: BorderRadius.circular(5),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              margin: const EdgeInsets.only(right: 10),
+            ),
+            Text(
+              'Alerts',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                '$alertCount',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 Widget miniDashboard(context)
