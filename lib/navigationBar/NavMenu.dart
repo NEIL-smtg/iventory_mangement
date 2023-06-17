@@ -3,6 +3,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:inventory_management/pages/homePage.dart';
 import 'package:inventory_management/pages/report/reportPage.dart';
 import 'package:inventory_management/pages/inventory/inventoryPage.dart';
+import 'package:inventory_management/pages/alerts/alertsPage.dart';
 
 class NavMenu extends StatefulWidget {
   final int pageNum;
@@ -44,6 +45,10 @@ class _NavMenuState extends State<NavMenu>{
             case 2:
               Navigator.of(context, rootNavigator: true)
                 .push(MaterialPageRoute(builder: (context) => inventoryPage()));
+            break;
+            case 3:
+              Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => alertsPage()));
             break;
             default:
           }
@@ -91,7 +96,7 @@ class _NavMenuState extends State<NavMenu>{
            NavBarItem(
             active: selected[3],
             icon: Icons.person,
-            name: 'Profile',
+            name: 'Alerts',
             touched: (){
               setState(() {
                 select(3);
