@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_management/navigationBar/NavMenu.dart';
 
+final int addingValue = 0;
+
 class Plan extends StatefulWidget {
   final int planNum;
 
@@ -10,12 +12,54 @@ class Plan extends StatefulWidget {
   State<Plan> createState() => _PlanState();
 }
 
-
 class _PlanState extends State<Plan> {
   int planNum = 0;
   bool isCollapsed = true;
   double screenWidth = 0, screenHeight = 0;
   final Duration duration = const Duration(milliseconds: 300);
+
+  final List<String> attributes = ['Product Code - Product Name', 'Quantity'];
+  String selectedAttribute = 'Add special order (if any):';
+
+  List<TableRowData> tableData = [];
+  List<String> dropdownItems = ['Apple', 'Orange'];
+  List<TextEditingController> textControllers = [];
+
+  List<double> itemsPrice = [5.9, 3.9, 11.9];
+
+  double position = 0.0;
+  double sliderPercent = 0.0;
+  double sliderWidth = 5;
+  double sliderHeight = 45;
+
+  @override
+  void dispose() {
+    for (var controller in textControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+
+  void addRow() {
+    setState(() {
+      tableData.add(TableRowData());
+      textControllers.add(TextEditingController());
+    });
+  }
+
+  void saveData() {
+    List<List<String>> formattedData = [];
+
+    for (var rowData in tableData) {
+      if (rowData.isValid()) {
+        List<String> data = [rowData.selectedItem!, rowData.textValue!];
+        formattedData.add(data);
+      }
+    }
+
+    print(formattedData);
+  }
 
   @override
   void initState() {
@@ -119,69 +163,181 @@ class _PlanState extends State<Plan> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            smtg(),
+            productTable(),
+            const SizedBox(height: 30),
+            Stack(
+              children: [
+                slidingBox(),
+                budgetSlider(),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget smtg(){
-    return Container(
-      
+  Widget budgetSlider(){
+    double maxW = MediaQuery.of(context).size.width / 2;
+    return GestureDetector(
+      onPanUpdate: (details) {
+        setState(() {
+          double newPos = position + details.delta.dx;
+          position = newPos.clamp(0, maxW);
+          sliderPercent = position * 100.0 / maxW;
+          print(sliderPercent);
+        });
+      },
+      child: Container(
+        width: maxW + sliderWidth,
+        height: sliderHeight,
+        child: Stack(
+          children: [
+            Positioned(
+              left: position,
+              top: 0,
+              child: Container(
+                width: sliderWidth,
+                height: sliderHeight,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 0, 19, 53),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+
+  Widget slidingBox(){
+    return Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: EdgeInsets.all(10),
+      ),
+    );
+  }
+  
+  Widget productTable(){
+    return Column(
+        children: [
+          Container(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: addRow,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+              ),
+              child: const Text(
+              'Add row',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Table(
+            border: TableBorder.all(),
+            columnWidths: const {
+              0: FractionColumnWidth(0.5),
+              1: FractionColumnWidth(0.5),
+            },
+            children: [
+              TableRow(
+                children: [
+                  TableCell(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: const Text(
+                        'Product code', // Replace with your attribute name
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: const Text(
+                        'Quantity', // Replace with your attribute name
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  ],
+              ),
+              for (int i = 0; i < tableData.length; i++)
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: DropdownButtonFormField<String>(
+                          value: tableData[i].selectedItem,
+                          items: dropdownItems.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              tableData[i].selectedItem = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: TextFormField(
+                          controller: textControllers[i],
+                          decoration: const InputDecoration(
+                            labelText: 'amount >= 1',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              tableData[i].textValue = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: saveData,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+            ),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      );
+  }
+
 }
 
-class ProductRow {
-  bool isExpanded = false;
-  String selectedProduct = '';
-  String quantity = '';
+class TableRowData {
+  String? selectedItem;
+  String? textValue;
 
-  DataRow buildDataRow() {
-    return DataRow(cells: [
-      DataCell(Text(selectedProduct)),
-      DataCell(TextField(
-        onChanged: (value) {
-          quantity = value;
-        },
-        decoration: InputDecoration(
-          hintText: 'Enter quantity',
-        ),
-      )),
-    ], onSelectChanged: (bool? selected) {
-      if (selected != null && selected) {
-        // Toggle expansion on row selection
-        toggleExpansion();
-      }
-    });
-  }
-
-  void toggleExpansion() {
-    if (isExpanded) {
-      // Collapse the row
-      isExpanded = false;
-      // Remove the row from the list if the product is not selected
-      if (selectedProduct.isEmpty) {
-        removeRow();
-      }
-    } else {
-      // Expand the row
-      isExpanded = true;
-      // Add a new row if this is the last row in the list
-      if (this == productRows.last) {
-        addRow();
-      }
-    }
-  }
-
-  void removeRow() {
-    productRows.remove(this);
-  }
-
-  void addRow() {
-    productRows.add(ProductRow());
+  bool isValid() {
+    return selectedItem != null && textValue != null;
   }
 }
 
-List<ProductRow> productRows = [ProductRow()];
