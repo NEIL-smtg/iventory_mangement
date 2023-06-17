@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:inventory_management/pages/homePage.dart';
 import 'package:inventory_management/pages/report/reportPage.dart';
+import 'package:inventory_management/pages/inventory/inventoryPage.dart';
 
 class NavMenu extends StatefulWidget {
   final int pageNum;
@@ -15,7 +16,7 @@ class NavMenu extends StatefulWidget {
 
 class _NavMenuState extends State<NavMenu>{
   int pageNum = 0;
-  List<bool> selected = [false, false, false, false];
+  List<bool> selected = [false, false, false, false, false];
 
   @override
   void initState() {
@@ -39,6 +40,10 @@ class _NavMenuState extends State<NavMenu>{
             case 1:
                Navigator.of(context, rootNavigator: true)
                 .push(MaterialPageRoute(builder: (context) => reportPage()));
+            break;
+            case 2:
+              Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => inventoryPage()));
             break;
             default:
           }
@@ -73,10 +78,10 @@ class _NavMenuState extends State<NavMenu>{
               });
             },
           ),
-           NavBarItem(
+          NavBarItem(
             active: selected[2],
-            icon: Icons.person,
-            name: 'Profile',
+            icon: Icons.report,
+            name: 'Inventory',
             touched: (){
               setState(() {
                 select(2);
@@ -85,11 +90,21 @@ class _NavMenuState extends State<NavMenu>{
           ),
            NavBarItem(
             active: selected[3],
+            icon: Icons.person,
+            name: 'Profile',
+            touched: (){
+              setState(() {
+                select(3);
+              });
+            },
+          ),
+           NavBarItem(
+            active: selected[4],
             icon: Feather.settings,
             name: 'settings',
             touched: (){
               setState(() {
-                select(3);
+                select(4);
               });
             },
           ),
