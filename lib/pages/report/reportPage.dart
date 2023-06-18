@@ -197,6 +197,7 @@ Widget ProductChart(){
 
 Widget StorageChart()
 {
+  double ratio = 4213/11960;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -209,11 +210,11 @@ Widget StorageChart()
               radius: 100,
               lineWidth: 25,
               backgroundColor: Colors.grey.shade500,
-              percent: 0.88,
+              percent: ratio,
               progressColor: const Color.fromARGB(255, 7, 112, 10),
               circularStrokeCap: CircularStrokeCap.round,
               animation: true,
-              animationDuration:  (0.88 * 2000).toInt(),
+              animationDuration:  (ratio * 2000).toInt(),
               center: const Text(
                 'Storage Overview',
                 style: TextStyle(
@@ -239,13 +240,17 @@ Widget itemStorage() {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildItemIndicator('Fish', 0.5, <Color>[Colors.yellow, Colors.orange]),
+            buildItemIndicator('Conduit Pipe', 0.01),
             const SizedBox(width: 20),
-            buildItemIndicator('Vegetable', 0.2, <Color>[Colors.orange, Colors.red]),
+            buildItemIndicator('Pipe T Joint', 0.01),
             const SizedBox(width: 20),
-            buildItemIndicator('Soda', 0.9, <Color>[Colors.green, Colors.greenAccent]),
+            buildItemIndicator('Valve', 0.01),
             const SizedBox(width: 20),
-            buildItemIndicator('Other', 0.67, <Color>[Colors.greenAccent, Colors.yellow]),
+            buildItemIndicator('Water Pump', 0.01),
+             const SizedBox(width: 20),
+            buildItemIndicator('Bolt', 912 / 5599),
+             const SizedBox(width: 20),
+            buildItemIndicator('Screw', 3301 / 4780),
           ],
         ),
       ),
@@ -253,15 +258,37 @@ Widget itemStorage() {
   );
 }
 
-Widget buildItemIndicator(String name, double percent, List<Color> c){
+Widget buildItemIndicator(String name, double ratio){
+  List<Color> c = [];
+
+  if (ratio > 0.75)
+    {
+      c.add(Colors.greenAccent);
+      c.add(Colors.green);
+    }
+    else if (ratio > 0.5)
+    {
+      c.add(Colors.yellow);
+      c.add(Colors.greenAccent);
+    }
+    else if (ratio > 0.25)
+    {
+      c.add(Colors.yellow);
+      c.add(Colors.orange);
+    }
+    else
+    {
+      c.add(Colors.orange);
+      c.add(Colors.red);
+    }
   return VerticalBarIndicator(
-      percent: percent,
+      percent: ratio,
       height: 200,
       animationDuration: const Duration(seconds: 1),
       circularRadius: 15,
       color: c,
       width: 20,
-      header: '${(percent * 100).toString()}%',
+      header: '${(ratio * 100).toStringAsFixed(2)}%',
       footer: name,
     );
 }
@@ -278,7 +305,7 @@ Widget reportButtons(context){
           const SizedBox(width: 20),
           build_reportButton('Balanced', 'balance.png', context),
           const SizedBox(width: 20),
-          build_reportButton('Risk-free', 'riskfree.png', context),
+          build_reportButton('Risk-free (COSTLY)', 'riskfree.png', context),
           const SizedBox(width: 30),
         ],
       ),

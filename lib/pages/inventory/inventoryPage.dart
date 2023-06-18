@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'dart:math';
-
+import 'updateHistory.dart';
+import 'salesHistory.dart';
 
 class InventoryPage extends StatelessWidget {
   @override
@@ -398,41 +399,6 @@ class _FirstSectionPageState extends State<FirstSectionPage> {
 
 
 
-///---------
-
-class SecondSectionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Section Page'),
-      ),
-      body: Center(
-        child: Text(
-          'Second Section Content',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
-}
-
-class ThirdSectionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Third Section Page'),
-      ),
-      body: Center(
-        child: Text(
-          'Third Section Content',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
-}
 
 
 Widget inventoryPage() {

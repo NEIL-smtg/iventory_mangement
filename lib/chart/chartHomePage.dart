@@ -22,6 +22,7 @@ Widget Chart()
 
 Widget StorageChart()
 {
+  double ratio = 4213/11960;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -34,11 +35,11 @@ Widget StorageChart()
               radius: 100,
               lineWidth: 25,
               backgroundColor: Colors.grey.shade500,
-              percent: 0.88,
+              percent: ratio,
               progressColor: const Color.fromARGB(255, 7, 112, 10),
               circularStrokeCap: CircularStrokeCap.round,
               animation: true,
-              animationDuration:  (0.88 * 2000).toInt(),
+              animationDuration:  (ratio * 2000).toInt(),
               center: const Text(
                 'Storage Overview',
                 style: TextStyle(

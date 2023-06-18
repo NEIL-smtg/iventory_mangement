@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_management/navigationBar/NavMenu.dart';
+import 'package:inventory_management/pages/report/purchasingList.dart';
 
 final int addingValue = 0;
 
@@ -22,15 +23,17 @@ class _PlanState extends State<Plan> {
   String selectedAttribute = 'Add special order (if any):';
 
   List<TableRowData> tableData = [];
-  List<String> dropdownItems = ['Apple', 'Orange'];
+  List<String> dropdownItems = ['Conduit Pipe', 'Pipe T Joint', 'Valve','Water Pump','Bolt','Screw'];
   List<TextEditingController> textControllers = [];
 
   List<double> itemsPrice = [5.9, 3.9, 11.9];
 
-  double position = 0.0;
-  double sliderPercent = 0.0;
-  double sliderWidth = 5;
-  double sliderHeight = 45;
+  double budget = 0;
+  double moneyNow = 33387; 
+
+  bool added = false;
+
+  TextEditingController _controller = TextEditingController();
 
   @override
   void dispose() {
@@ -39,7 +42,6 @@ class _PlanState extends State<Plan> {
     }
     super.dispose();
   }
-
 
   void addRow() {
     setState(() {
@@ -51,14 +53,25 @@ class _PlanState extends State<Plan> {
   void saveData() {
     List<List<String>> formattedData = [];
 
+    setState(() {
+        added = true;
+        moneyNow += (tableData.length * 850).toDouble();
+        tableData.clear();
+        tableData = [];
+    });
+
     for (var rowData in tableData) {
       if (rowData.isValid()) {
         List<String> data = [rowData.selectedItem!, rowData.textValue!];
         formattedData.add(data);
       }
     }
-
     print(formattedData);
+  }
+
+  void carryToNextPage(){
+    Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => purchasingList(budget: budget, planNum: planNum, added: added,)));
   }
 
   @override
@@ -136,8 +149,8 @@ class _PlanState extends State<Plan> {
                           });
                         },
                       ),
-                      const Text(
-                        'Report',
+                      Text(
+                        '${getTitle()}',
                         style: TextStyle(
                           fontSize: 24,
                           color: Colors.black,
@@ -157,6 +170,18 @@ class _PlanState extends State<Plan> {
     );
   }
 
+  String getTitle(){
+    if (planNum == 1){
+      return 'Best Seller Plan';
+    }
+    else if (planNum == 2){
+      return 'Balanced Plan';
+    }
+    else{
+      return 'Risk-free Plan';
+    }
+  }
+
   Widget scrollingContainer(context) {
     return Expanded(
       child: SingleChildScrollView(
@@ -165,62 +190,15 @@ class _PlanState extends State<Plan> {
             const SizedBox(height: 30),
             productTable(),
             const SizedBox(height: 30),
-            Stack(
-              children: [
-                slidingBox(),
-                budgetSlider(),
-              ],
-            ),
+            infoTable(),
+            const SizedBox(height: 20),
+            nxtPageConfirmBtn(),
           ],
         ),
       ),
     );
   }
 
-  Widget budgetSlider(){
-    double maxW = MediaQuery.of(context).size.width / 2;
-    return GestureDetector(
-      onPanUpdate: (details) {
-        setState(() {
-          double newPos = position + details.delta.dx;
-          position = newPos.clamp(0, maxW);
-          sliderPercent = position * 100.0 / maxW;
-          print(sliderPercent);
-        });
-      },
-      child: Container(
-        width: maxW + sliderWidth,
-        height: sliderHeight,
-        child: Stack(
-          children: [
-            Positioned(
-              left: position,
-              top: 0,
-              child: Container(
-                width: sliderWidth,
-                height: sliderHeight,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 0, 19, 53),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget slidingBox(){
-    return Material(
-      elevation: 5,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: EdgeInsets.all(10),
-      ),
-    );
-  }
-  
   Widget productTable(){
     return Column(
         children: [
@@ -330,6 +308,48 @@ class _PlanState extends State<Plan> {
       );
   }
 
+  Widget infoTable() {
+    if (planNum == 3)
+      return Container();
+    return DataTable(
+      columns: const [
+        DataColumn(label: Text('Money needed now (RM)')),
+        DataColumn(label: Text('Money to buy (RM)')),
+      ],
+      rows: [
+        DataRow(cells: [
+          DataCell(Text(moneyNow.toString())),
+          DataCell(
+            TextFormField(
+             controller: _controller,
+             decoration: InputDecoration(
+              labelText: 'Your investment..',
+            ),
+            onChanged: (value) {
+              setState(() {
+                budget = double.parse(value);
+              });
+            },
+          )),
+        ]),
+      ],
+    );
+  }
+
+  Widget nxtPageConfirmBtn(){
+    return ElevatedButton(
+      onPressed: carryToNextPage,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+      ),
+      child: const Text(
+        'Confirm',
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
 }
 
 class TableRowData {
@@ -340,4 +360,3 @@ class TableRowData {
     return selectedItem != null && textValue != null;
   }
 }
-
